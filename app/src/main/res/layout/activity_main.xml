@@ -36,11 +36,10 @@
                 android:layout_below="@+id/bnotalaucher"
                 android:layout_centerInParent="true"
                 android:text="Bloco de Notas"
-                android:textSize="18sp"
-                android:textStyle="bold"
                 android:textColor="@color/black"
+                android:textSize="18sp"
 
-                />
+                android:textStyle="bold" />
 
 
         </RelativeLayout>

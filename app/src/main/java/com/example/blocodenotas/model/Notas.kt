@@ -4,9 +4,10 @@ data class Notas (
 
     val id: Int,
     val titulo: String,
-    val descrição: String,
+    val descricao: String,
 
 
 
 
-)
+
+    )
