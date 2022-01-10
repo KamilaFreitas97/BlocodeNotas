@@ -5,52 +5,38 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.blocodenotas.model.Notas
+import com.example.blocodenotas.model.Nota
 import com.google.android.material.snackbar.Snackbar
 import java.util.ArrayList
 
 class ListaInicioActivity : AppCompatActivity() {
-
-    var listNotas: ArrayList<Notas> = arrayListOf<Notas>()
+    val notasService = NotasService()
+    lateinit var listNotas: ArrayList<Nota>
     lateinit var adapter: BlocoNotasAdapter
+    lateinit var adicionarNotaLanucher: ActivityResultLauncher<Intent>
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_lista_inicio)
         supportActionBar?.hide()
-        
-        var id = 0
 
         val recyclerView: RecyclerView = findViewById(R.id.listainicio)
 
         recyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
 
-
-        val adicionarNotaLanucher: ActivityResultLauncher<Intent> =
+        adicionarNotaLanucher =
             registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-
+                //adicionando ou editando nota retornada da outra atividade
                 if (it.resultCode == RESULT_OK) {
-
-                    val idAtual = it.data!!.getIntExtra(
-                        "id",
-                        -1
-                    ) //differenciar quando for adicionar ou editar
-                    val titulo = it.data!!.getStringExtra("titulo")
-                    val descricao = it.data!!.getStringExtra("descricao")
-                    val notas = Notas(id, titulo!!, descricao!!)
-                    if (idAtual == -1) {
-
-                        listNotas.add(notas)
-                        adapter.notifyItemInserted(listNotas.size - 1)
-                        id++
+                    val nota = it.data!!.getSerializableExtra("nota") as Nota
+                    if (nota.id == null) {
+                        addNota(nota)
                     } else {
-                        //pegando a nota de idatual
-                        val index = listNotas.indexOfFirst { nota -> nota.id == idAtual }
-                        listNotas.set(index, notas)
-                        adapter.notifyItemChanged(index)
+                        atualizarNota(nota)
                     }
                     Snackbar.make(recyclerView, "Nota adicionado com sucesso", Snackbar.LENGTH_LONG)
                         .show()
@@ -58,30 +44,57 @@ class ListaInicioActivity : AppCompatActivity() {
 
                 }
             }
-        adapter = BlocoNotasAdapter(listNotas, clickListener = { nota ->
-            val intent = Intent(this, MainActivity::class.java).apply {
-                putExtra("id", nota.id)
-                putExtra("titulo", nota.titulo)
-                putExtra("descricao", nota.descricao)
 
-            }
+        notasService.ListarNotas(
+            { notas ->
+                listNotas = notas
+                adapter = BlocoNotasAdapter(listNotas, clickListener = this::notaClickListener)
+                recyclerView.adapter = adapter
+                checaListavazia()
 
-            adicionarNotaLanucher.launch(intent)
-        })
-
-        recyclerView.adapter = adapter
+            },
+            this::erro
+        )
 
         val fablista: View = findViewById(R.id.fablista)
         fablista.setOnClickListener {
-
-            val intent = Intent(this, MainActivity::class.java)
-
+            val intent = Intent(this, AdicionarNotaActivity::class.java)
             adicionarNotaLanucher.launch(intent)
 
         }
+    }
 
-        checaListavazia()
+    fun addNota(nota: Nota) {
+        notasService.adicionarNota(nota,
+            { id ->
+                listNotas.add(nota)
+                adapter.notifyItemInserted(listNotas.size - 1)
 
+            },
+            this::erro
+        )
+
+    }
+
+    fun atualizarNota(nota: Nota) {
+
+        notasService.atualizarNota(nota,
+            {
+                val index = listNotas.indexOfFirst { item -> item.id == nota.id }
+                listNotas.set(index, nota)
+                adapter.notifyItemChanged(index)
+            },
+            this::erro
+        )
+    }
+
+    fun notaClickListener(nota: Nota) {
+        val intent = Intent(this, AdicionarNotaActivity::class.java).apply {
+            putExtra("nota", nota)
+
+        }
+
+        adicionarNotaLanucher.launch(intent)
     }
 
 
@@ -95,6 +108,10 @@ class ListaInicioActivity : AppCompatActivity() {
             image.visibility = View.INVISIBLE
         }
 
+    }
+
+    fun erro(e: Exception) {
+        Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT).show()
     }
 
 }

@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "441493393886",
+    "project_id": "blocodenotas-a1118",
+    "storage_bucket": "blocodenotas-a1118.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:441493393886:android:2faedc59a959cfb91c8d4f",
+        "android_client_info": {
+          "package_name": "com.example.blocodenotas"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "441493393886-7ftarqnj6r5hm3lku20r238u71teot6k.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBaSBGD5hIP6vtb8u8kuA4VVSMRNJ2IoKY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "441493393886-7ftarqnj6r5hm3lku20r238u71teot6k.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

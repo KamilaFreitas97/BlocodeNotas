@@ -6,12 +6,12 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.blocodenotas.model.Notas
+import com.example.blocodenotas.model.Nota
 
 class BlocoNotasAdapter (
 
-    private val items: List<Notas>,
-    private val clickListener: (Notas) -> Unit
+    private val items: List<Nota>,
+    private val clickListener: (Nota) -> Unit
 
 ) : RecyclerView.Adapter<BlocoNotasAdapter.ViewHolder>(){
 
